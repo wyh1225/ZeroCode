@@ -9,9 +9,15 @@ import BasicLayout from '@/layouts/BasicLayout.vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import { useLoginUserStore } from '@/stores/loginUser.ts'
 dayjs.locale('zh-cn')
 
 const locale = zhCN
+
+const loginUserStore = useLoginUserStore()
+loginUserStore.fetchLoginUser()
 </script>
 
-<style></style>
+<style scoped>
+
+</style>
