@@ -4,7 +4,9 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;
 import com.zero.aizero.model.dto.app.AppQueryRequest;
 import com.zero.aizero.model.entity.App;
+import com.zero.aizero.model.entity.User;
 import com.zero.aizero.model.vo.app.AppVO;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -12,6 +14,25 @@ import java.util.List;
  * 应用 服务层
  */
 public interface AppService extends IService<App> {
+
+    /**
+     * 通过对话生成应用代码
+     *
+     * @param appId 应用 ID
+     * @param message 提示词
+     * @param loginUser 登录用户
+     * @return
+     */
+    Flux<String> chatToGenCode(Long appId, String message, User loginUser);
+
+    /**
+     * 应用部署
+     *
+     * @param appId 应用 ID
+     * @param loginUser 登录用户
+     * @return 可访问的部署地址
+     */
+    String deployApp(Long appId, User loginUser);
 
     /**
      * 构造应用查询条件

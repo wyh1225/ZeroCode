@@ -1,8 +1,8 @@
 package com.zero.aizero.core.saver;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.zero.aizero.constant.AppConstant;
 import com.zero.aizero.exception.BusinessException;
 import com.zero.aizero.exception.ErrorCode;
 import com.zero.aizero.service.impl.CodeGenTypeEnum;
@@ -22,19 +22,20 @@ public abstract class CodeFileSaverTemplate<T> {
     /**
      * 文件保存的根目录
      */
-    private static final String FILE_SAVE_ROOT_DIR = System.getProperty("user.dir") + "/tmp/code_output";
+    private static final String FILE_SAVE_ROOT_DIR = AppConstant.CODE_OUTPUT_ROOT_DIR;
 
     /**
      * 模板方法：保存代码的标准流程
      *
      * @param result 代码结果对象
+     * @param appId 应用 ID
      * @return 保存的目录
      */
-    public final File saveCode(T result) {
+    public final File saveCode(T result, Long appId) {
         // 验证输入
         validateInput(result);
         // 构建目录
-        String baseDirPath = buildUniqueDir();
+        String baseDirPath = buildUniqueDir(appId);
         // 保存文件（具体实现交给子类）
         saveFiles(result, baseDirPath);
         // 返回文件目录对象
@@ -69,11 +70,15 @@ public abstract class CodeFileSaverTemplate<T> {
     /**
      * 构建文件的唯一路径：tmp/code_output/bizType_雪花 ID
      *
+     * @param appId 应用 ID
      * @return 目录路径
      */
-    protected String buildUniqueDir() {
+    protected String buildUniqueDir(Long appId) {
+        if (appId == null) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "应用 ID 不能为空");
+        }
         String codeType = getCodeType().getValue();
-        String uniqueDirName = StrUtil.format("{}_{}", codeType, IdUtil.getSnowflakeNextIdStr());
+        String uniqueDirName = StrUtil.format("{}_{}", codeType, appId);
         String dirPath = FILE_SAVE_ROOT_DIR + File.separator + uniqueDirName;
         FileUtil.mkdir(dirPath);
         return dirPath;
