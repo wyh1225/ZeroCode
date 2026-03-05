@@ -1,4 +1,4 @@
-package com.zero.aizero.model.vo;
+package com.zero.aizero.model.vo.user;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.zero.aizero.model.dto;
+package com.zero.aizero.model.dto.user;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.zero.aizero.model.dto;
+package com.zero.aizero.model.dto.user;
 
 import com.zero.aizero.common.PageRequest;
 import lombok.Data;

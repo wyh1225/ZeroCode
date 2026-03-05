@@ -2,10 +2,10 @@ package com.zero.aizero.service;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;
-import com.zero.aizero.model.dto.UserQueryRequest;
+import com.zero.aizero.model.dto.user.UserQueryRequest;
 import com.zero.aizero.model.entity.User;
-import com.zero.aizero.model.vo.LoginUserVO;
-import com.zero.aizero.model.vo.UserVO;
+import com.zero.aizero.model.vo.user.LoginUserVO;
+import com.zero.aizero.model.vo.user.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;

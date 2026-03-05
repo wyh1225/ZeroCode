@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 文件保存器
  */
+@Deprecated(since = "已弃用，请使用 CodeFileSaverExecutor")
 public class CodeFileSaver {
 
     /**
