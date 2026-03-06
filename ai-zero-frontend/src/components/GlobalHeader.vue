@@ -6,7 +6,7 @@
         <RouterLink to="/">
           <div class="header-left">
             <img class="logo" src="@/assets/logo.svg" alt="Logo" />
-            <h1 class="site-title">AIZero</h1>
+            <h1 class="site-title">ZeroCode</h1>
           </div>
         </RouterLink>
       </a-col>
@@ -26,7 +26,7 @@
             <a-dropdown>
               <a-space>
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" />
-                {{ loginUserStore.loginUser.userName ?? '默认用户' }}
+                {{ loginUserStore.loginUser.userName ?? '默认名称' }}
               </a-space>
               <template #overlay>
                 <a-menu>
@@ -52,12 +52,10 @@ import { computed, h, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useLoginUserStore } from '@/stores/loginUser.ts'
-import { LogoutOutlined } from '@ant-design/icons-vue'
 import { userLogout } from '@/api/userController.ts'
-import { HomeOutlined } from '@ant-design/icons-vue'
+import { LogoutOutlined, HomeOutlined } from '@ant-design/icons-vue'
 
 const loginUserStore = useLoginUserStore()
-
 const router = useRouter()
 // 当前选中菜单
 const selectedKeys = ref<string[]>(['/'])
@@ -65,6 +63,7 @@ const selectedKeys = ref<string[]>(['/'])
 router.afterEach((to, from, next) => {
   selectedKeys.value = [to.path]
 })
+
 // 菜单配置项
 const originItems = [
   {
@@ -77,6 +76,11 @@ const originItems = [
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',
+  },
+  {
+    key: '/admin/appManage',
+    label: '应用管理',
+    title: '应用管理',
   },
   {
     key: 'others',
@@ -122,7 +126,7 @@ const doLogout = async () => {
     message.success('退出登录成功')
     await router.push('/user/login')
   } else {
-    message.error('退出登录失败, ' + res.data.message)
+    message.error('退出登录失败，' + res.data.message)
   }
 }
 </script>
