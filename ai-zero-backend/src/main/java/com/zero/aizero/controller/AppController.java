@@ -20,7 +20,7 @@ import com.zero.aizero.model.entity.User;
 import com.zero.aizero.model.vo.app.AppVO;
 import com.zero.aizero.service.AppService;
 import com.zero.aizero.service.UserService;
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;

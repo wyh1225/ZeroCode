@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.zero.aizero.ai.model.MultiFileCodeResult;
 import com.zero.aizero.exception.BusinessException;
 import com.zero.aizero.exception.ErrorCode;
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 
 /**
  * 多文件代码保存器

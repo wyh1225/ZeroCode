@@ -17,6 +17,7 @@ import com.zero.aizero.model.dto.app.AppQueryRequest;
 import com.zero.aizero.model.entity.App;
 import com.zero.aizero.model.entity.User;
 import com.zero.aizero.model.enums.ChatHistoryMessageTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 import com.zero.aizero.model.vo.app.AppVO;
 import com.zero.aizero.model.vo.user.UserVO;
 import com.zero.aizero.service.AppService;

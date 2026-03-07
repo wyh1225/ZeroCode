@@ -8,7 +8,7 @@ import com.zero.aizero.core.parser.CodeParserExecutor;
 import com.zero.aizero.core.saver.CodeFileSaverExecutor;
 import com.zero.aizero.exception.BusinessException;
 import com.zero.aizero.exception.ErrorCode;
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,17 +30,17 @@ public class AiCodeGeneratorFacade {
      * 统一入口：根据类型生成并保存代码
      *
      * @param userMessage     用户提示词
-     * @param codeGenTypeEnum 生成类型
+     * @param codeGenType 生成类型
      * @param appId 应用 ID
      * @return 保存的目录
      */
-    public File generateAndSaveCode(String userMessage, CodeGenTypeEnum codeGenTypeEnum, Long appId) {
-        if (codeGenTypeEnum == null) {
+    public File generateAndSaveCode(String userMessage, CodeGenTypeEnum codeGenType, Long appId) {
+        if (codeGenType == null) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成类型为空");
         }
         // 根据 appId 获取相应的 AI 服务实例
-        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId);
-        return switch (codeGenTypeEnum) {
+        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId, codeGenType);
+        return switch (codeGenType) {
             case HTML -> {
                 HtmlCodeResult result = aiCodeGeneratorService.generateHtmlCode(userMessage);
                 yield CodeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.HTML, appId);
@@ -50,7 +50,7 @@ public class AiCodeGeneratorFacade {
                 yield CodeFileSaverExecutor.executeSaver(result, CodeGenTypeEnum.MULTI_FILE, appId);
             }
             default -> {
-                String errorMessage = "不支持的生成类型：" + codeGenTypeEnum.getValue();
+                String errorMessage = "不支持的生成类型：" + codeGenType.getValue();
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, errorMessage);
             }
         };
@@ -60,17 +60,17 @@ public class AiCodeGeneratorFacade {
      * 统一入口：根据类型生成并保存代码（流式）
      *
      * @param userMessage     用户提示词
-     * @param codeGenTypeEnum 生成类型
+     * @param codeGenType 生成类型
      * @param appId 应用 ID
      * @return 保存的目录
      */
-    public Flux<String> generateAndSaveCodeStream(String userMessage, CodeGenTypeEnum codeGenTypeEnum, Long appId) {
-        if (codeGenTypeEnum == null) {
+    public Flux<String> generateAndSaveCodeStream(String userMessage, CodeGenTypeEnum codeGenType, Long appId) {
+        if (codeGenType == null) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成类型为空");
         }
         // 根据 appId 获取相应的 AI 服务实例
-        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId);
-        return switch (codeGenTypeEnum) {
+        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId, codeGenType);
+        return switch (codeGenType) {
             case HTML -> {
                 Flux<String> codeStream = aiCodeGeneratorService.generateHtmlCodeStream(userMessage);
                 yield processCodeStream(codeStream, CodeGenTypeEnum.HTML, appId);
@@ -79,8 +79,12 @@ public class AiCodeGeneratorFacade {
                 Flux<String> codeStream = aiCodeGeneratorService.generateMultiFileCodeStream(userMessage);
                 yield processCodeStream(codeStream, CodeGenTypeEnum.MULTI_FILE, appId);
             }
+            case VUE_PROJECT -> {
+                Flux<String> codeStream = aiCodeGeneratorService.generateVueProjectCodeStream(appId, userMessage);
+                yield processCodeStream(codeStream, CodeGenTypeEnum.MULTI_FILE, appId);
+            }
             default -> {
-                String errorMessage = "不支持的生成类型：" + codeGenTypeEnum.getValue();
+                String errorMessage = "不支持的生成类型：" + codeGenType.getValue();
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, errorMessage);
             }
         };

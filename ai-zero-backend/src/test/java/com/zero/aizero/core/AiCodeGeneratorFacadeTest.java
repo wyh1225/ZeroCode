@@ -1,6 +1,6 @@
 package com.zero.aizero.core;
 
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class AiCodeGeneratorFacadeTest {
 
     @Test
     void generateAndSaveCode() {
-        File file = aiCodeGeneratorFacade.generateAndSaveCode("生成一个简短的三行情话，要好看一点的样式，最多10行代码", CodeGenTypeEnum.HTML, 1L);
+        File file = aiCodeGeneratorFacade.generateAndSaveCode("生成一个简短的三行情话，最多10行代码", CodeGenTypeEnum.HTML, 1L);
         Assertions.assertNotNull(file);
     }
 
@@ -29,6 +29,19 @@ class AiCodeGeneratorFacadeTest {
         List<String> result = codeStream.collectList().block();
         Assertions.assertNotNull(result);
         // 拼接字符串，得到完整内容
+        String completeContent = String.join("", result);
+        Assertions.assertNotNull(completeContent);
+    }
+
+    @Test
+    void generateVueProjectCodeStream() {
+        Flux<String> codeStream = aiCodeGeneratorFacade.generateAndSaveCodeStream(
+                "简单的任务记录网站，总代码量不超过 200 行",
+                CodeGenTypeEnum.VUE_PROJECT, 2L);
+        // 阻塞等待所有数据收集完成
+        List<String> result = codeStream.collectList().block();
+        // 验证结果
+        Assertions.assertNotNull(result);
         String completeContent = String.join("", result);
         Assertions.assertNotNull(completeContent);
     }

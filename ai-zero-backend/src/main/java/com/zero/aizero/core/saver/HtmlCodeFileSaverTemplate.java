@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.zero.aizero.ai.model.HtmlCodeResult;
 import com.zero.aizero.exception.BusinessException;
 import com.zero.aizero.exception.ErrorCode;
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 
 /**
  * HTML 文件保存器

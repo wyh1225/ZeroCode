@@ -2,7 +2,7 @@ package com.zero.aizero.core.parser;
 
 import com.zero.aizero.exception.BusinessException;
 import com.zero.aizero.exception.ErrorCode;
-import com.zero.aizero.service.impl.CodeGenTypeEnum;
+import com.zero.aizero.model.enums.CodeGenTypeEnum;
 
 /**
  * 代码解析执行器
