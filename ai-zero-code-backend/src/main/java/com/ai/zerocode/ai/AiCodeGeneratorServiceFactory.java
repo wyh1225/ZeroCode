@@ -1,12 +1,12 @@
 package com.ai.zerocode.ai;
 
+import com.ai.zerocode.ai.tools.ToolManager;
+import com.ai.zerocode.exception.BusinessException;
+import com.ai.zerocode.exception.ErrorCode;
 import com.ai.zerocode.model.enums.CodeGenTypeEnum;
 import com.ai.zerocode.service.ChatHistoryService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.ai.zerocode.ai.tools.FileWriteTool;
-import com.ai.zerocode.exception.BusinessException;
-import com.ai.zerocode.exception.ErrorCode;
 import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -41,6 +41,9 @@ public class AiCodeGeneratorServiceFactory {
 
     @Resource
     private ChatHistoryService chatHistoryService;
+
+    @Resource
+    private ToolManager toolManager;
 
     /**
      * AI 服务实例缓存
@@ -110,7 +113,7 @@ public class AiCodeGeneratorServiceFactory {
                     .chatModel(chatModel)
                     .streamingChatModel(reasoningStreamingChatModel)
                     .chatMemoryProvider(memoryId -> chatMemory)
-                    .tools(new FileWriteTool())
+                    .tools(toolManager.getAllTools())
                     // 处理工具调用幻觉问题
                     .hallucinatedToolNameStrategy(toolExecutionRequest ->
                             ToolExecutionResultMessage.from(toolExecutionRequest,
