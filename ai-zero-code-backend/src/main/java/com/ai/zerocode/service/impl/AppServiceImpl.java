@@ -18,6 +18,7 @@ import com.ai.zerocode.model.vo.app.AppVO;
 import com.ai.zerocode.model.vo.user.UserVO;
 import com.ai.zerocode.service.AppService;
 import com.ai.zerocode.service.ChatHistoryService;
+import com.ai.zerocode.service.ScreenshotService;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.ai.zerocode.exception.BusinessException;
@@ -60,6 +61,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
     @Resource
     private VueProjectBuilder vueProjectBuilder;
+
+    @Resource
+    private ScreenshotService screenshotService;
 
     @Override
     public Flux<String> chatToGenCode(Long appId, String message, User loginUser) {
@@ -135,8 +139,27 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         updateApp.setDeployedTime(LocalDateTime.now());
         boolean result = this.updateById(updateApp);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "更新应用部署信息失败");
+        // 得到可访问的 URL 地址
+        String appDeployUrl = String.format("%s/%s", AppConstant.CODE_DEPLOY_HOST, deployKey);
+        // 异步生成截图并且更新应用封面
+        generateAppScreenshotAsync(appId, appDeployUrl);
         // 返回可访问的 URL 地址
-        return String.format("%s/%s", AppConstant.CODE_DEPLOY_HOST, deployKey);
+        return appDeployUrl;
+    }
+
+    @Override
+    public void generateAppScreenshotAsync(Long appId, String appUrl) {
+        // 创建虚拟线程并执行
+        Thread.startVirtualThread(() -> {
+            // 调用截图服务生成截图并上传
+            String screenshotUrl = screenshotService.generateAndUploadScreenshot(appUrl);
+            // 更新数据库中的应用封面
+            App updateApp = new App();
+            updateApp.setId(appId);
+            updateApp.setCover(screenshotUrl);
+            boolean updated = this.updateById(updateApp);
+            ThrowUtils.throwIf(!updated, ErrorCode.OPERATION_ERROR, "更新应用封面失败");
+        });
     }
 
     @Override

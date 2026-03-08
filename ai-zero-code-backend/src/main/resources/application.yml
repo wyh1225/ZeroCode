@@ -16,7 +16,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.zero.aizero.controller
+      packages-to-scan: com.ai.zerocode.controller
 # knife4j
 knife4j:
   enable: true
