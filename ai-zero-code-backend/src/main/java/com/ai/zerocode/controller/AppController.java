@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.ai.zerocode.ai.AiCodeGenTypeRoutingService;
 import com.ai.zerocode.ai.AiCodeGenTypeRoutingServiceFactory;
 import com.ai.zerocode.annotation.AuthCheck;
+import com.ai.zerocode.annotation.RateLimit;
 import com.ai.zerocode.common.BaseResponse;
 import com.ai.zerocode.common.DeleteRequest;
 import com.ai.zerocode.common.ResultUtils;
@@ -18,6 +19,7 @@ import com.ai.zerocode.model.dto.app.*;
 import com.ai.zerocode.model.entity.App;
 import com.ai.zerocode.model.entity.User;
 import com.ai.zerocode.model.enums.CodeGenTypeEnum;
+import com.ai.zerocode.model.enums.RateLimitType;
 import com.ai.zerocode.model.vo.app.AppVO;
 import com.ai.zerocode.service.AppService;
 import com.ai.zerocode.service.ProjectDownloadService;
@@ -55,6 +57,7 @@ public class AppController {
     @Resource
     private ProjectDownloadService projectDownloadService;
 
+    @RateLimit(limitType = RateLimitType.USER, rate = 5, rateInterval = 60, message = "AI 对话请求过于频繁，请稍后再试")
     @GetMapping(value = "/chat/gen/code", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> chatToGenCode(@RequestParam Long appId,
                                                        @RequestParam String message,
