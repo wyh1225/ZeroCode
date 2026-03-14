@@ -1,5 +1,6 @@
 package com.ai.zerocode.ai;
 
+import com.ai.zerocode.ai.guardrail.PromptSafetyInputGuardrail;
 import com.ai.zerocode.ai.tools.ToolManager;
 import com.ai.zerocode.exception.BusinessException;
 import com.ai.zerocode.exception.ErrorCode;
@@ -105,6 +106,8 @@ public class AiCodeGeneratorServiceFactory {
                         .chatModel(chatModel)
                         .streamingChatModel(openAiStreamingChatModel)
                         .chatMemory(chatMemory)
+                        // 添加输入护轨
+                        .inputGuardrails(new PromptSafetyInputGuardrail())
                         .build();
             }
             // Vue 项目生成，使用工具调用和推理模型
@@ -120,6 +123,8 @@ public class AiCodeGeneratorServiceFactory {
                         .hallucinatedToolNameStrategy(toolExecutionRequest ->
                                 ToolExecutionResultMessage.from(toolExecutionRequest,
                                         "Error: there is no tool called " + toolExecutionRequest.name()))
+                        // 添加输入护轨
+                        .inputGuardrails(new PromptSafetyInputGuardrail())
                         .build();
             }
             default -> throw new BusinessException(ErrorCode.SYSTEM_ERROR, "不支持的代码生成类型：" + codeGenType.getValue());
