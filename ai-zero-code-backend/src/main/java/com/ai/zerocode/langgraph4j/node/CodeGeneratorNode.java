@@ -30,8 +30,8 @@ public class CodeGeneratorNode {
             // 调用 AI 代码生成外观服务
             AiCodeGeneratorFacade codeGeneratorFacade = SpringContextUtil.getBean(AiCodeGeneratorFacade.class);
             log.info("开始生成代码，类型：{}（{}）", generationType.getValue(), generationType.getText());
-            // TODO: 先使用固定的 appId（后续整合到业务中）
-            Long appId = 1000L;
+            // 获取应用 ID
+            Long appId = context.getAppId();
             // 调用流式代码生成
             Flux<String> codeStream = codeGeneratorFacade.generateAndSaveCodeStream(userMessage, generationType, appId);
             // 同步等待流式输出完成，最多等待 10 分钟

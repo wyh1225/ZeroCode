@@ -85,6 +85,11 @@ public class WorkflowContext implements Serializable {
     private ImageCollectionPlan imageCollectionPlan;
 
     /**
+     * 应用 ID
+     */
+    private Long appId;
+
+    /**
      * 并发图片收集的中间结果字段
      */
     private List<ImageResource> contentImages;

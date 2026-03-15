@@ -15,6 +15,7 @@ import com.ai.zerocode.constant.UserConstant;
 import com.ai.zerocode.exception.BusinessException;
 import com.ai.zerocode.exception.ErrorCode;
 import com.ai.zerocode.exception.ThrowUtils;
+import com.ai.zerocode.langgraph4j.CodeGenWorkflow;
 import com.ai.zerocode.model.dto.app.*;
 import com.ai.zerocode.model.entity.App;
 import com.ai.zerocode.model.entity.User;
@@ -69,6 +70,7 @@ public class AppController {
         User loginUser = userService.getLoginUser(request);
         // 调用服务生成代码（SSE 流式返回）
         Flux<String> contentFlux = appService.chatToGenCode(appId, message, loginUser);
+//        Flux<String> contentFlux = new CodeGenWorkflow().executeWorkflowWithFlux(message, appId);
         return contentFlux
                 .map(chunk -> {
                     Map<String, String> wrapper = Map.of("d", chunk);

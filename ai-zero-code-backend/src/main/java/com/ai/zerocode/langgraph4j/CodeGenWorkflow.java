@@ -68,11 +68,12 @@ public class CodeGenWorkflow {
     /**
      * 执行工作流
      */
-    public WorkflowContext executeWorkflow(String originalPrompt) {
+    public WorkflowContext executeWorkflow(String originalPrompt, Long appId) {
         CompiledGraph<MessagesState<String>> workflow = createWorkflow();
         // 初始化 WorkflowContext
         WorkflowContext initialContext = WorkflowContext.builder()
                 .originalPrompt(originalPrompt)
+                .appId(appId)
                 .currentStep("初始化")
                 .build();
 
@@ -101,18 +102,20 @@ public class CodeGenWorkflow {
     /**
      * 执行工作流（Flux 流式输出版本）
      */
-    public Flux<String> executeWorkflowWithFlux(String originalPrompt) {
+    public Flux<String> executeWorkflowWithFlux(String originalPrompt, Long appId) {
         return Flux.create(sink -> {
             Thread.startVirtualThread(() -> {
                 try {
                     CompiledGraph<MessagesState<String>> workflow = createWorkflow();
                     WorkflowContext initialContext = WorkflowContext.builder()
                             .originalPrompt(originalPrompt)
+                            .appId(appId)
                             .currentStep("初始化")
                             .build();
                     sink.next(formatSseEvent("workflow_start", Map.of(
                             "message", "开始执行代码生成工作流",
-                            "originalPrompt", originalPrompt
+                            "originalPrompt", originalPrompt,
+                            "appId", appId
                     )));
 
                     // TODO 调试使用，后续删除
@@ -166,18 +169,20 @@ public class CodeGenWorkflow {
     /**
      * 执行工作流（SSE 流式输出版本）
      */
-    public SseEmitter executeWorkflowWithSse(String originalPrompt) {
+    public SseEmitter executeWorkflowWithSse(String originalPrompt, Long appId) {
         SseEmitter emitter = new SseEmitter(30 * 60 * 1000L);
         Thread.startVirtualThread(() -> {
             try {
                 CompiledGraph<MessagesState<String>> workflow = createWorkflow();
                 WorkflowContext initialContext = WorkflowContext.builder()
                         .originalPrompt(originalPrompt)
+                        .appId(appId)
                         .currentStep("初始化")
                         .build();
                 sendSseEvent(emitter, "workflow_start", Map.of(
                         "message", "开始执行代码生成工作流",
-                        "originalPrompt", originalPrompt
+                        "originalPrompt", originalPrompt,
+                        "appId", appId
                 ));
                 GraphRepresentation graph = workflow.getGraph(GraphRepresentation.Type.MERMAID);
                 log.info("工作流图:\n{}", graph.content());

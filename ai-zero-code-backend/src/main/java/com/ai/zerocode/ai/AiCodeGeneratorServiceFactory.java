@@ -108,7 +108,7 @@ public class AiCodeGeneratorServiceFactory {
                         .streamingChatModel(openAiStreamingChatModel)
                         .chatMemory(chatMemory)
                         // 添加输入护轨
-                        .inputGuardrails(new PromptSafetyInputGuardrail())
+//                        .inputGuardrails(new PromptSafetyInputGuardrail())
                         // 添加输出护轨（为了流式输出，这里不使用）
 //                        .outputGuardrails(new RetryOutputGuardrail())
                         .build();
@@ -129,7 +129,7 @@ public class AiCodeGeneratorServiceFactory {
                         // 最多连续调用 20 次工具
                         .maxSequentialToolsInvocations(20)
                         // 添加输入护轨
-                        .inputGuardrails(new PromptSafetyInputGuardrail())
+//                        .inputGuardrails(new PromptSafetyInputGuardrail())
                         // 添加输出护轨（为了流式输出，这里不使用）
 //                        .outputGuardrails(new RetryOutputGuardrail())
                         .build();
