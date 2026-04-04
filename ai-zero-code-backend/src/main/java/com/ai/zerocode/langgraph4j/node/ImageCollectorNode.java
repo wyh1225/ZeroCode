@@ -16,6 +16,7 @@ import org.bsc.langgraph4j.prebuilt.MessagesState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 
@@ -38,12 +39,13 @@ public class ImageCollectorNode {
                 log.info("获取到图片收集计划，开始并发执行");
                 // 开始并发执行各种图片收集任务
                 List<CompletableFuture<List<ImageResource>>> futures = new ArrayList<>();
+                ExecutorService imageCollectorPool = SpringContextUtil.getBean("imageCollectorPool", ExecutorService.class);
                 // 并发执行内容图片搜索
                 if (plan.getContentImageTasks() != null) {
                     ImageSearchTool imageSearchTool = SpringContextUtil.getBean(ImageSearchTool.class);
                     for (ImageCollectionPlan.ImageSearchTask task : plan.getContentImageTasks()) {
                         futures.add(CompletableFuture.supplyAsync(() ->
-                                imageSearchTool.searchContentImages(task.query())));
+                                imageSearchTool.searchContentImages(task.query()), imageCollectorPool));
                     }
                 }
                 // 并发执行插画图片搜索
@@ -51,7 +53,7 @@ public class ImageCollectorNode {
                     UndrawIllustrationTool undrawIllustrationTool = SpringContextUtil.getBean(UndrawIllustrationTool.class);
                     for (ImageCollectionPlan.IllustrationTask task : plan.getIllustrationTasks()) {
                         futures.add(CompletableFuture.supplyAsync(() ->
-                                undrawIllustrationTool.searchIllustrations(task.query())));
+                                undrawIllustrationTool.searchIllustrations(task.query()), imageCollectorPool));
                     }
                 }
                 // 并发执行架构图生成
@@ -59,7 +61,7 @@ public class ImageCollectorNode {
                     MermaidDiagramTool mermaidDiagramTool = SpringContextUtil.getBean(MermaidDiagramTool.class);
                     for (ImageCollectionPlan.DiagramTask task : plan.getDiagramTasks()) {
                         futures.add(CompletableFuture.supplyAsync(() ->
-                                mermaidDiagramTool.generateMermaidDiagram(task.mermaidCode(), task.description())));
+                                mermaidDiagramTool.generateMermaidDiagram(task.mermaidCode(), task.description()), imageCollectorPool));
                     }
                 }
                 // 并发执行 LOGO 生成
@@ -67,7 +69,7 @@ public class ImageCollectorNode {
                     LogoGeneratorTool logoGeneratorTool = SpringContextUtil.getBean(LogoGeneratorTool.class);
                     for (ImageCollectionPlan.LogoTask task : plan.getLogoTasks()) {
                         futures.add(CompletableFuture.supplyAsync(() ->
-                                logoGeneratorTool.generateLogos(task.description())));
+                                logoGeneratorTool.generateLogos(task.description()), imageCollectorPool));
                     }
                 }
                 // 等待所有任务完成并收集结果

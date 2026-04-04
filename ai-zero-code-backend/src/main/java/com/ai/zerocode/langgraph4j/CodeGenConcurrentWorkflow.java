@@ -1,7 +1,5 @@
 package com.ai.zerocode.langgraph4j;
 
-import cn.hutool.core.thread.ExecutorBuilder;
-import cn.hutool.core.thread.ThreadFactoryBuilder;
 import com.ai.zerocode.exception.BusinessException;
 import com.ai.zerocode.exception.ErrorCode;
 import com.ai.zerocode.langgraph4j.model.QualityResult;
@@ -9,6 +7,7 @@ import com.ai.zerocode.langgraph4j.node.*;
 import com.ai.zerocode.langgraph4j.node.concurrent.*;
 import com.ai.zerocode.langgraph4j.state.WorkflowContext;
 import com.ai.zerocode.model.enums.CodeGenTypeEnum;
+import com.ai.zerocode.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bsc.langgraph4j.*;
 import org.bsc.langgraph4j.prebuilt.MessagesState;
@@ -16,9 +15,6 @@ import org.bsc.langgraph4j.prebuilt.MessagesStateGraph;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.bsc.langgraph4j.StateGraph.END;
 import static org.bsc.langgraph4j.StateGraph.START;
@@ -98,12 +94,7 @@ public class CodeGenConcurrentWorkflow {
         WorkflowContext finalContext = null;
         int stepCounter = 1;
         // 配置并发执行
-        ExecutorService pool = ExecutorBuilder.create()
-                .setCorePoolSize(10)
-                .setMaxPoolSize(20)
-                .setWorkQueue(new LinkedBlockingQueue<>(100))
-                .setThreadFactory(ThreadFactoryBuilder.create().setNamePrefix("Parallel-Image-Collect").build())
-                .build();
+        ExecutorService pool = SpringContextUtil.getBean("imageCollectorPool", ExecutorService.class);
         RunnableConfig runnableConfig = RunnableConfig.builder()
                 .addParallelNodeExecutor("image_plan", pool)
                 .build();
