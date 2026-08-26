@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: ai-zero-code-app
+  profiles:
+    active: local
+server:
+  port: 8125
+  servlet:
+    context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+# springdoc-openapi
+springdoc:
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.ai.zerocode.controller
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
