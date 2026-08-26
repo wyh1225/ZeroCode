@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @MapperScan("com.ai.zerocodeuser.mapper")
 @ComponentScan("com.ai")
-public class ZeroCodeUserApplication {
+public class AiZeroCodeUserApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ZeroCodeUserApplication.class, args);
+        SpringApplication.run(AiZeroCodeUserApplication.class, args);
     }
 }
