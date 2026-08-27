@@ -255,7 +255,7 @@ public class AppController {
      * @return 精选应用列表
      */
     @Cacheable(
-            condition = "#appQueryRequest.pageNum <= 10",
+            unless = "#appQueryRequest.pageNum <= 10",
             key = "T(com.ai.zerocode.utils.CacheKeyUtils).generateKey(#appQueryRequest)",
             value = "good_app_page"
     )
