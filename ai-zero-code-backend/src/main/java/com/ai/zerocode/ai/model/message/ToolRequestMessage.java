@@ -1,6 +1,6 @@
 package com.ai.zerocode.ai.model.message;
 
-import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.model.chat.response.PartialToolCall;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,16 +13,19 @@ import lombok.NoArgsConstructor;
 @Data
 public class ToolRequestMessage extends StreamMessage {
 
+    private int index;
+
     private String id;
 
     private String name;
 
-    private String arguments;
+    private String partialArguments;
 
-    public ToolRequestMessage(ToolExecutionRequest toolExecutionRequest) {
+    public ToolRequestMessage(PartialToolCall partialToolCall) {
         super(StreamMessageTypeEnum.TOOL_REQUEST.getValue());
-        this.id = toolExecutionRequest.id();
-        this.name = toolExecutionRequest.name();
-        this.arguments = toolExecutionRequest.arguments();
+        this.index = partialToolCall.index();
+        this.id = partialToolCall.id();
+        this.name = partialToolCall.name();
+        this.partialArguments = partialToolCall.partialArguments();
     }
 }
